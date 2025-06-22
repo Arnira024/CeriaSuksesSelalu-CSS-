@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Pengguna - Kereta Api Sulawesi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --biru-tua: #003366;
+      --biru-semi-tua: #00509e;
+      --biru-medium: #0077cc;
+      --biru-muda: #66b2ff;
+      --biru-sangat-muda: #cce5ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --merah: #dc3545;
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--biru-muda), var(--biru-sangat-muda));
+      color: var(--biru-tua);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Navigation */
+    .navbar {
+      background-color: var(--biru-tua);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-img {
+      height: 50px;
+      width: auto;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--putih);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: color 0.3s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-links a:hover {
+      color: var(--biru-muda);
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--biru-muda);
+      transition: width 0.3s;
+    }
+    
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    
+    .nav-links a i {
+      margin-right: 8px;
+    }
+    
+    .logout-btn {
+      background-color: #dc3545;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background-color: #c0392b;
+      color: var(--putih) !important;
+    }
+    
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .menu-toggle span {
+      height: 3px;
+      width: 25px;
+      background-color: var(--putih);
+      margin: 3px 0;
+      transition: all 0.3s;
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 2rem 5%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .profile-container {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .profile-header {
+      background: linear-gradient(135deg, var(--biru-semi-tua), var(--biru-tua));
+      padding: 2rem;
+      text-align: center;
+      color: var(--putih);
+      position: relative;
+    }
+    
+    .profile-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('In train.png') center/cover;
+      opacity: 0.2;
+    }
+    
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--putih);
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .profile-info {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .profile-info h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .profile-info p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    .profile-badge {
+      display: inline-block;
+      background-color: var(--hijau);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    
+    .profile-body {
+      padding: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    
+    .profile-section {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    .section-title {
+      color: var(--biru-semi-tua);
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--biru-sangat-muda);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section-title i {
+      font-size: 1.1rem;
+    }
+    
+    .detail-row {
+      display: flex;
+      margin-bottom: 1rem;
+    }
+    
+    .detail-label {
+      width: 120px;
+      font-weight: 500;
+      color: var(--biru-semi-tua);
+    }
+    
+    .detail-value {
+      flex: 1;
+      color: #444;
+    }
+    
+    .edit-btn {
+      background-color: var(--biru-medium);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0, 83, 161, 0.2);
+    }
+    
+    .edit-btn:hover {
+      background-color: var(--biru-semi-tua);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 83, 161, 0.3);
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: var(--biru-semi-tua);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--biru-muda);
+      box-shadow: 0 0 0 3px rgba(102, 178, 255, 0.2);
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .btn-save {
+      background-color: var(--hijau);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-save:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+    }
+    
+    .btn-cancel {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-cancel:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+    }
+    
+    /* Footer */
+    footer {
+      background: var(--biru-tua);
+      color: var(--putih);
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: auto;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: var(--putih);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .footer-links a:hover {
+      color: var(--biru-muda);
+    }
+    
+    .footer-info {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0.8rem 5%;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background-color: var(--biru-tua);
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+        transition: left 0.3s;
+        gap: 1rem;
+      }
+      
+      .nav-links.active {
+        left: 0;
+      }
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      .profile-body {
+        flex-direction: column;
+        gap: 2rem;
+      }
+      
+      .detail-row {
+        flex-direction: column;
+      }
+      
+      .detail-label {
+        width: 100%;
+        margin-bottom: 3px;
+      }
+      
+      .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo-container">
+      <img src="navbar.jpg" alt="Logo" class="logo-img">
+    </div>
+    
+    <div class="menu-toggle" id="mobile-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <ul class="nav-links" id="nav-links">
+      <li><a href="beranda.html"><i class="fas fa-home"></i> Beranda</a></li>
+      <li><a href="jadwal.html"><i class="fas fa-calendar-alt"></i> Jadwal</a></li>
+      <li><a href="jadwal.html"><i class="fas fa-receipt"></i> Transaksi</a></li>
+      <li><a href="tracking.html"><i class="fas fa-map-marked-alt"></i> Tracking</a></li>
+      <li><a href="profil.html" class="active"><i class="fas fa-user"></i> Profil</a></li>
+      <li><a href="login.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="profile-container">
+      <div class="profile-header">
+        <img src="logo.jpeg" alt="User Avatar" class="profile-avatar" id="profileAvatar">
+        <div class="profile-info">
+          <h1 id="profileName">User</h1>
+          <p>Member sejak <span id="joinDate">15 Maret 2023</span></p>
+          <div class="profile-badge">Verified User</div>
+        </div>
+      </div>
+      
+      <div class="profile-body">
+        <div class="profile-section">
+          <h2 class="section-title"><i class="fas fa-user-circle"></i> Informasi Pribadi</h2>
+          
+          <div class="profile-details" id="profileView">
+            <div class="detail-row">
+              <div class="detail-label">Nama Lengkap</div>
+              <div class="detail-value" id="viewFullName">user</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Email</div>
+              <div class="detail-value" id="viewEmail">user@email.com</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">No. Telepon</div>
+              <div class="detail-value" id="viewPhone">081234567890</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Jenis Kelamin</div>
+              <div class="detail-value" id="viewGender">Laki-laki</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Tanggal Lahir</div>
+              <div class="detail-value" id="viewDob">01 Januari 0001</div>
+            </div>
+            
+            <button class="edit-btn" onclick="enableEdit()"><i class="fas fa-edit"></i> Edit Profil</button>
+          </div>
+          
+          <div class="profile-details" id="profileEdit" style="display: none;">
+            <div class="form-group">
+              <label for="editFullName">Nama Lengkap</label>
+              <input type="text" id="editFullName" class="form-control" value="Ahmad Fauzi">
+            </div>
+            <div class="form-group">
+              <label for="editEmail">Email</label>
+              <input type="email" id="editEmail" class="form-control" value="ahmad.fauzi@email.com">
+            </div>
+            <div class="form-group">
+              <label for="editPhone">No. Telepon</label>
+              <input type="tel" id="editPhone" class="form-control" value="081234567890">
+            </div>
+            <div class="form-group">
+              <label for="editGender">Jenis Kelamin</label>
+              <select id="editGender" class="form-control">
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editDob">Tanggal Lahir</label>
+              <input type="date" id="editDob" class="form-control" value="1990-01-15">
+            </div>
+            <div class="form-group">
+              <label for="editAvatar">Foto Profil</label>
+              <input type="file" id="editAvatar" class="form-control" accept="image/*">
+            </div>
+            
+            <div class="button-group">
+              <button class="btn-save" onclick="saveProfile()"><i class="fas fa-save"></i> Simpan Perubahan</button>
+              <button class="btn-cancel" onclick="cancelEdit()"><i class="fas fa-times"></i> Batal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">Tentang Kami</a>
+        <a href="#">Kebijakan Privasi</a>
+        <a href="#">Syarat dan Ketentuan</a>
+        <a href="#">Hubungi Kami</a>
+      </div>
+      <div class="footer-info">
+        <p>&copy; 2025 PT Kereta Api Sulawesi Selatan. All Rights Reserved.</p>
+        <p>Layanan Pelanggan: 24.24.24 | Email: Kareta@gmail.com</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    
+    mobileMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+
+    // Fungsi untuk mengaktifkan mode edit
+    function enableEdit() {
+      document.getElementById('profileView').style.display = 'none';
+      document.getElementById('profileEdit').style.display = 'block';
+      
+      // Isi form edit dengan data saat ini
+      document.getElementById('editFullName').value = document.getElementById('viewFullName').textContent;
+      document.getElementById('editEmail').value = document.getElementById('viewEmail').textContent;
+      document.getElementById('editPhone').value = document.getElementById('viewPhone').textContent;
+      document.getElementById('editGender').value = document.getElementById('viewGender').textContent;
+    }
+    
+    // Fungsi untuk membatalkan edit
+    function cancelEdit() {
+      document.getElementById('profileView').style.display = 'block';
+      document.getElementById('profileEdit').style.display = 'none';
+    }
+    
+    // Fungsi untuk menyimpan profil
+    function saveProfile() {
+      // Ambil nilai dari form edit
+      const fullName = document.getElementById('editFullName').value;
+      const email = document.getElementById('editEmail').value;
+      const phone = document.getElementById('editPhone').value;
+      const gender = document.getElementById('editGender').value;
+      const dob = document.getElementById('editDob').value;
+      
+      // Format tanggal lahir
+      const dobDate = new Date(dob);
+      const formattedDob = dobDate.toLocaleDateString('id-ID', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+      });
+      
+      // Update tampilan dengan data baru
+      document.getElementById('viewFullName').textContent = fullName;
+      document.getElementById('viewEmail').textContent = email;
+      document.getElementById('viewPhone').textContent = phone;
+      document.getElementById('viewGender').textContent = gender;
+      document.getElementById('viewDob').textContent = formattedDob;
+      document.getElementById('profileName').textContent = fullName;
+      
+      // Handle upload gambar
+      const avatarInput = document.getElementById('editAvatar');
+      if (avatarInput.files && avatarInput.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          document.getElementById('profileAvatar').src = e.target.result;
+        }
+        
+        reader.readAsDataURL(avatarInput.files[0]);
+      }
+      
+      // Kembali ke mode view
+      cancelEdit();
+      // Tampilkan notifikasi
+      alert('Profil berhasil diperbarui!');
+    }
+  </script>
+  <script>
+  function enableEdit() {
+    document.getElementById("profileView").style.display = "none";
+    document.getElementById("profileEdit").style.display = "block";
+  }
+
+  function cancelEdit() {
+    document.getElementById("profileEdit").style.display = "none";
+    document.getElementById("profileView").style.display = "block";
+  }
+
+  function saveProfile() {
+    // Ambil nilai dari form
+    const name = document.getElementById("editFullName").value;
+    const email = document.getElementById("editEmail").value;
+    const phone = document.getElementById("editPhone").value;
+    const gender = document.getElementById("editGender").value;
+    const dob = document.getElementById("editDob").value;
+
+    // Perbarui tampilan
+    document.getElementById("viewFullName").textContent = name;
+    document.getElementById("viewEmail").textContent = email;
+    document.getElementById("viewPhone").textContent = phone;
+    document.getElementById("viewGender").textContent = gender;
+    document.getElementById("viewDob").textContent = formatDate(dob);
+    document.getElementById("profileName").textContent = name;
+
+    // Sembunyikan form, tampilkan view
+    cancelEdit();
+  }
+
+  function formatDate(dateStr) {
+    const options = { day: '2-digit', month: 'long', year: 'numeric' };
+    const dateObj = new Date(dateStr);
+    return dateObj.toLocaleDateString('id-ID', options);
+  }
+
+  // Responsive menu toggle
+  document.getElementById("mobile-menu").addEventListener("click", function () {
+    document.getElementById("nav-links").classList.toggle("active");
+  });
+</script>
+</body>
+</html>
