@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jadwal Kereta Sulsel</title>
+
+  <!-- Font Awesome untuk ikon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    :root {
+      --biru-tua: #003366;
+      --biru-semi-tua: #00509e;
+      --biru-super-muda: #e6f2ff;
+      --hijau: #28a745;
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.2);
+      --error-red: #dc3545;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-super-muda), white);
+      margin: 0;
+      color: var(--biru-tua);
+    }
+
+    .navbar {
+      background: var(--biru-tua);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .logo-img {
+      height: 50px;
+      width: auto;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-links a i {
+      margin-right: 5px;
+    }
+
+    .logout-btn {
+      background: var(--error-red);
+      padding: 8px 15px;
+      border-radius: 5px;
+      color: white;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+    }
+
+    th {
+      background: var(--biru-semi-tua);
+      color: white;
+    }
+
+    .btn {
+      background: var(--hijau);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 30px auto;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+      max-height: calc(100vh - 60px);
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .close {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn-submit {
+      margin-top: 1.5rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <img src="navbar.jpg" alt="Logo" class="logo-img">
+    <ul class="nav-links" id="nav-links">
+      <li><a href="beranda.html" onclick="goToHome()" class="active"><i class="fas fa-home"></i> Beranda</a></li>
+      <li><a href="jadwal.html" onclick="goToSchedule()"><i class="fas fa-calendar-alt"></i> Jadwal</a></li>
+      <li><a href="tracking.html" onclick="goToTracking()"><i class="fas fa-map-marked-alt"></i> Tracking</a></li>
+      <li><a href="transaksi.html" onclick="goToTransactions()"><i class="fas fa-exchange-alt"></i> Transaksi</a></li>
+      <li><a href="User_Profil.php" onclick="goToAccount()"><i class="fas fa-user-circle"></i> Akun</a></li>
+      <li><a href="login.html" onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <h1>Jadwal Kereta</h1>
+    <div id="schedule-container"></div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-modal">&times;</span>
+      <h3>Form Pemesanan</h3>
+      <p><strong>Kereta:</strong> <span id="kereta"></span></p>
+      <p><strong>Rute:</strong> <span id="rute"></span></p>
+      <p><strong>Stasiun:</strong> <span id="stasiun"></span></p>
+      <p><strong>Waktu:</strong> <span id="waktu"></span></p>
+      <p><strong>Harga per Tiket:</strong> Rp <span id="harga"></span></p>
+
+      <label>Nama Lengkap</label>
+      <input type="text" id="nama">
+
+      <label>Nomor Telepon</label>
+      <input type="tel" id="telp">
+
+      <label>Jumlah Tiket</label>
+      <input type="number" id="jumlah" min="1" value="1">
+
+      <label>Metode Pembayaran</label>
+      <select id="metode">
+        <option value="" disabled selected>-- Pilih Metode --</option>
+        <option value="Transfer Bank">Transfer Bank</option>
+        <option value="DANA">DANA</option>
+        <option value="OVO">OVO</option>
+      </select>
+
+      <button class="btn btn-submit" id="btn-submit">Bayar Sekarang</button>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const container = document.getElementById('schedule-container');
+    const modal = document.getElementById('modal');
+    const closeModal = document.getElementById('close-modal');
+
+    let jadwalDipilih = null;
+
+    function fetchJadwal() {
+      fetch('jadwal.php')
+        .then(res => res.json())
+        .then(data => {
+          const table = document.createElement('table');
+          table.innerHTML = `
+            <thead>
+  <tr>
+    <th>Rute</th>
+    <th>Stasiun Keberangkatan</th>
+    <th>Waktu Berangkat</th>
+    <th>Waktu Tiba</th>
+    <th>Harga</th>
+    <th>Aksi</th>
+  </tr>
+</thead>
+<tbody>
+  ${data.map(j => `
+    <tr>
+      <td>${j.route_name}</td>
+      <td>${j.departure_station}</td>
+      <td>${new Date(j.departure_time).toLocaleString('id-ID')}</td>
+      <td>${new Date(j.arrival_time).toLocaleString('id-ID')}</td>
+      <td>Rp ${parseFloat(j.price).toLocaleString('id-ID')}</td>
+      <td><button class="btn" data-info='${JSON.stringify(j)}'>Pesan</button></td>
+    </tr>
+  `).join('')}
+</tbody>
+
+          `;
+          container.appendChild(table);
+
+          document.querySelectorAll('button.btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              jadwalDipilih = JSON.parse(btn.dataset.info);
+              document.getElementById('kereta').textContent = jadwalDipilih.train_name;
+              document.getElementById('rute').textContent = `${jadwalDipilih.departure_station} ke ${jadwalDipilih.arrival_station}`;
+              document.getElementById('stasiun').textContent = jadwalDipilih.departure_station;
+              document.getElementById('waktu').textContent = new Date(jadwalDipilih.departure_time).toLocaleString('id-ID');
+              document.getElementById('harga').textContent = parseFloat(jadwalDipilih.price).toLocaleString('id-ID');
+              modal.style.display = 'block';
+            });
+          });
+        });
+    }
+
+    closeModal.onclick = () => modal.style.display = 'none';
+    window.onclick = e => { if (e.target == modal) modal.style.display = 'none'; };
+
+    document.getElementById('btn-submit').onclick = () => {
+      const nama = document.getElementById('nama').value.trim();
+      const telp = document.getElementById('telp').value.trim();
+      const jumlah = parseInt(document.getElementById('jumlah').value);
+      const metode = document.getElementById('metode').value;
+      if (!nama || !telp || !metode || jumlah < 1) {
+        alert('Harap lengkapi data pemesanan!');
+        return;
+      }
+      const total = parseFloat(jadwalDipilih.price) * jumlah;
+
+      fetch('bayar.php', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({
+    jadwal: jadwalDipilih,
+    nama: nama,
+    telp: telp,
+    jumlah: jumlah,
+    metode: metode,
+    total: total
+  })
+})
+
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === 'success') {
+  alert('✅ Pembayaran berhasil! Anda akan diarahkan ke halaman transaksi.');
+  window.location.href = 'transaksi.html'; // arahkan ke transaksi.html
+} else {
+  alert('❌ Gagal: ' + res.message);
+}
+
+      });
+    };
+
+    fetchJadwal();
+  </script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <title>Admin Panel - Live Tracking Kereta</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --biru-tua: #265AE0;
+      --biru-semi-tua: #3a6fe8;
+      --biru-muda: #66b2ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --merah: #dc3545;
+      --kuning: #FFC107;
+      --abu: rgba(42, 80, 117, 0.9);
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+      --on-trip: #28a745;
+      --arrived: #dc3545;
+      --delayed: #FF9800;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-tua), var(--putih));
+      background-attachment: fixed;
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Navbar */
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--biru-tua);
+    }
+    
+    .logo img {
+      height: 30px;
+      margin-right: 10px;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--biru-tua);
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-links a:hover {
+      background-color: var(--biru-super-muda);
+    }
+
+    .nav-links a.active {
+      background-color: var(--biru-semi-tua);
+      color: white;
+    }
+
+    .nav-links a i {
+      margin-right: 5px;
+    }
+    
+    .logout-btn {
+      background-color: var(--merah);
+      color: white !important;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+    
+    .logout-btn:hover {
+      background-color: #c82333 !important;
+    }
+    
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .menu-toggle span {
+      height: 3px;
+      width: 25px;
+      background-color: var(--biru-tua);
+      margin: 3px 0;
+      transition: all 0.3s;
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      padding: 1rem 5%;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .page-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--putih);
+      position: relative;
+      padding-bottom: 10px;
+      font-size: 1.5rem;
+    }
+    .page-title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(to right, var(--biru-muda), var(--putih));
+      border-radius: 2px;
+    }
+    
+    /* Preview Section */
+    .preview-section {
+      background: var(--putih);
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+    }
+    
+    .preview-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--biru-tua);
+      font-size: 1.2rem;
+      font-weight: 600;
+      position: relative;
+      padding-bottom: 8px;
+    }
+    
+    .preview-title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: var(--biru-muda);
+      border-radius: 2px;
+    }
+    
+    /* Live Tracking Preview */
+    .live-tracking-preview {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1.5rem;
+      font-family: monospace;
+      position: relative;
+    }
+    
+    .train-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    
+    .train-id {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .status-section {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .status-section.on-trip {
+      background-color: var(--on-trip);
+      color: white;
+    }
+    
+    .status-section.arrived {
+      background-color: var(--arrived);
+      color: white;
+    }
+    
+    .status-section.delayed {
+      background-color: var(--delayed);
+      color: white;
+    }
+    
+    .train-info {
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    
+    .arrival-time {
+      text-align: center;
+      font-size: 1.1rem;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    
+    .countdown {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 20px 0;
+      color: var(--biru-tua);
+    }
+    
+    .last-updated {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 20px;
+    }
+    
+    /* Edit Button */
+    .edit-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--biru-tua);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 10;
+      transition: all 0.3s;
+    }
+    
+    .edit-btn:hover {
+      background: var(--biru-semi-tua);
+      transform: scale(1.05);
+    }
+    
+    /* Edit Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #777;
+      background: none;
+      border: none;
+      z-index: 1010;
+    }
+    
+    .close-btn:hover {
+      color: var(--biru-tua);
+    }
+    
+    .form-container {
+      margin-top: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+      color: var(--biru-semi-tua);
+      font-size: 0.9rem;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: border-color 0.3s;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--biru-tua);
+      box-shadow: 0 0 0 2px rgba(38, 90, 224, 0.2);
+    }
+    
+    .btn {
+      background-color: var(--biru-semi-tua);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    
+    .btn:hover {
+      background-color: var(--biru-tua);
+    }
+    
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 5px;
+      color: white;
+      font-weight: 600;
+      z-index: 2000;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.4s ease;
+    }
+    
+    .notification.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .notification.success {
+      background-color: var(--hijau);
+    }
+    
+    .notification.error {
+      background-color: var(--merah);
+    }
+    
+    /* Loading Indicator */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, var(--biru-semi-tua), var(--biru-tua));
+      color: var(--putih);
+      text-align: center;
+      padding: 1rem;
+      margin-top: auto;
+      font-size: 0.9rem;
+    }
+    footer p {
+      margin: 0.3rem 0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      /* Navbar responsive */
+      .navbar {
+        flex-direction: row;
+        padding: 10px;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 60px;
+        left: -100%;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.95);
+        flex-direction: column;
+        align-items: center;
+        padding: 15px 0;
+        transition: left 0.3s;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      
+      .nav-links.active {
+        left: 0;
+      }
+      
+      .nav-links a {
+        width: 90%;
+        text-align: center;
+        padding: 6px 0;
+        font-size: 0.9rem;
+      }
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      .preview-section {
+        padding: 1rem;
+      }
+      
+      .modal-content {
+        padding: 1rem;
+        width: 95%;
+      }
+      
+      .edit-btn {
+        top: 15px;
+        right: 15px;
+        width: 35px;
+        height: 35px;
+      }
+      
+      .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        width: calc(100% - 20px);
+        text-align: center;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo web.jpeg" alt="Logo">
+      <span>Admin Stasiun</span>
+    </div>
+    
+    <div class="menu-toggle" id="mobile-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <ul class="nav-links" id="nav-links">
+      <a href="Admn_Beranda.html"><i class="fas fa-home"></i> Beranda</a>
+      <a href="Admn_Penjadwalan.html"><i class="fas fa-train"></i> Penjadwalan</a>
+      <a href="Admn_Tracking.html" class="active"><i class="fas fa-chart-line"></i> Pemantauan</a>
+      <a href="Admn_Data_Pemesanan.html"><i class="fas fa-ticket-alt"></i> Pemesanan</a>
+      <a href="Admn_Profil.html"><i class="fas fa-user"></i> Akun</a>
+      <a href="Admn_Login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </ul>
+  </nav>
+
+  <main>
+    <h1 class="page-title">Live Tracking Kereta</h1>
+    
+    <!-- Preview Section -->
+    <div class="preview-section">
+      <h2 class="preview-title">Live Tracking Kereta</h2>
+      <button class="edit-btn" id="editBtn">
+        <i class="fas fa-edit"></i>
+      </button>
+      
+      <div class="live-tracking-preview">
+        <div class="train-header">
+          <span class="train-name" id="preview-train-name">krt1</span>
+          <span class="train-route" id="preview-train-route">Mandal-Garongkong</span>
+        </div>
+        <div class="train-id">ID Kereta: <span id="preview-train-id">12</span></div>
+        
+        <div class="status-section on-trip" id="preview-status">DALAM PERJALANAN</div>
+        
+        <div class="train-info">
+          <p>Menuju <strong id="preview-next-station">Staslun Garongkong</strong></p>
+          <p>Berangkat dari: <strong id="preview-current-station">Staslun Mandal</strong></p>
+          <p>Estimasi tiba: <strong id="preview-arrival-time">11:41</strong></p>
+        </div>
+        
+        <div class="arrival-time" id="arrival-section">
+          <p>Tiba dalam:</p>
+          <div class="countdown" id="countdown">01:13:01</div>
+        </div>
+        
+        <div class="last-updated">Terakhir diperbarui: <span id="preview-last-updated">10:27:55</span></div>
+      </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+      <div class="modal-content">
+        <button class="close-btn" id="closeModal">&times;</button>
+        <h2 style="margin-bottom: 1.5rem; color: var(--biru-tua);">Edit Jadwal Kereta</h2>
+        
+        <div class="form-container">
+          <form id="trackingForm">
+            <input type="hidden" id="schedule_id" name="schedule_id">
+            
+            <div class="form-group">
+              <label for="train_id">ID Kereta</label>
+              <input type="text" name="train_id" id="train_id" required readonly>
+            </div>
+
+            <div class="form-group">
+              <label for="train_name">Nama Kereta</label>
+              <input type="text" name="train_name" id="train_name" required>
+            </div>
+
+            <div class="form-group">
+              <label for="route">Rute</label>
+              <input type="text" name="route" id="route" required>
+            </div>
+
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select name="status" id="status" required>
+                <option value="on_trip">Dalam Perjalanan</option>
+                <option value="arrived">Telah Sampai</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="current_station">Stasiun Saat Ini</label>
+              <input type="text" name="current_station" id="current_station" required>
+            </div>
+
+            <div class="form-group">
+              <label for="next_station">Stasiun Berikutnya</label>
+              <input type="text" name="next_station" id="next_station">
+            </div>
+
+            <div class="form-group">
+              <label for="departure_time">Waktu Berangkat</label>
+              <input type="datetime-local" name="departure_time" id="departure_time" required>
+            </div>
+
+            <div class="form-group">
+              <label for="arrival_time">Waktu Tiba</label>
+              <input type="datetime-local" name="arrival_time" id="arrival_time" required>
+            </div>
+
+            <div class="form-group">
+              <label for="delay">Keterlambatan (menit)</label>
+              <input type="number" name="delay" id="delay" min="0" value="0">
+            </div>
+
+            <button type="submit" class="btn">
+              <i class="fas fa-save"></i> Update Jadwal
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 PT Kereta Api Sulawesi Selatan. All Rights Reserved.</p>
+    <p>Layanan Pelanggan: 1500 123</p>
+  </footer>
+
+  <script>
+    // Fungsi untuk mengupdate preview tracking
+    function updatePreview(data) {
+      // Update preview elements
+      document.getElementById('preview-train-name').textContent = data.train_name;
+      document.getElementById('preview-train-route').textContent = data.route;
+      document.getElementById('preview-train-id').textContent = data.train_id;
+      document.getElementById('preview-current-station').textContent = data.current_station;
+      document.getElementById('preview-next-station').textContent = data.next_station;
+      
+      // Update status
+      const previewStatus = document.getElementById('preview-status');
+      previewStatus.className = 'status-section';
+      
+      if (data.status === 'on_trip') {
+        previewStatus.classList.add('on-trip');
+        previewStatus.textContent = 'DALAM PERJALANAN';
+        document.getElementById('arrival-section').style.display = 'block';
+      } else if (data.status === 'arrived') {
+        previewStatus.classList.add('arrived');
+        previewStatus.textContent = 'TELAH TIBA';
+        document.getElementById('arrival-section').style.display = 'none';
+      }
+      
+      // Format waktu tiba
+      const arrivalDate = new Date(data.arrival_time);
+      const hours = arrivalDate.getHours().toString().padStart(2, '0');
+      const minutes = arrivalDate.getMinutes().toString().padStart(2, '0');
+      document.getElementById('preview-arrival-time').textContent = `${hours}:${minutes}`;
+      
+      // Update countdown
+      updateCountdown(data.arrival_time);
+      
+      // Update last updated time
+      const now = new Date();
+      const updatedHours = now.getHours().toString().padStart(2, '0');
+      const updatedMinutes = now.getMinutes().toString().padStart(2, '0');
+      const updatedSeconds = now.getSeconds().toString().padStart(2, '0');
+      document.getElementById('preview-last-updated').textContent = `${updatedHours}:${updatedMinutes}:${updatedSeconds}`;
+    }
+    
+    // Fungsi untuk mengupdate countdown
+    function updateCountdown(arrivalTime) {
+      if (!arrivalTime) return;
+      
+      const arrivalDate = new Date(arrivalTime);
+      const now = new Date();
+      
+      // Jika waktu tiba sudah lewat
+      if (arrivalDate < now) {
+        document.getElementById('countdown').textContent = '00:00:00';
+        return;
+      }
+      
+      // Hitung selisih waktu
+      const diffMs = arrivalDate - now;
+      const diffSec = Math.floor(diffMs / 1000);
+      
+      const hours = Math.floor(diffSec / 3600);
+      const minutes = Math.floor((diffSec % 3600) / 60);
+      const seconds = diffSec % 60;
+      
+      // Format waktu
+      const formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      document.getElementById('countdown').textContent = formatted;
+    }
+    
+    // Format datetime untuk input datetime-local
+    function formatDateTimeForInput(datetimeStr) {
+      return datetimeStr.replace(' ', 'T').substring(0, 16);
+    }
+    
+    // Modal control
+    const editBtn = document.getElementById('editBtn');
+    const modal = document.getElementById('editModal');
+    const closeBtn = document.getElementById('closeModal');
+    
+    editBtn.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+    
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    });
+    
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+    
+    // Fungsi untuk menampilkan notifikasi
+    function showNotification(message, isSuccess) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = 'notification ' + (isSuccess ? 'success' : 'error');
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Fungsi untuk memuat data tracking dari API
+    function loadTrackingData() {
+      fetch('tracking.php')
+        .then(response => response.json())
+        .then(data => {
+          // Update preview dengan data baru
+          updatePreview(data);
+          
+          // Isi form dengan data
+          document.getElementById('schedule_id').value = data.train_id;
+          document.getElementById('train_id').value = data.train_id;
+          document.getElementById('train_name').value = data.train_name;
+          document.getElementById('route').value = data.route;
+          document.getElementById('status').value = data.status;
+          document.getElementById('current_station').value = data.current_station;
+          document.getElementById('next_station').value = data.next_station || '';
+          document.getElementById('departure_time').value = formatDateTimeForInput(data.departure_time);
+          document.getElementById('arrival_time').value = formatDateTimeForInput(data.arrival_time);
+          document.getElementById('delay').value = data.delay || 0;
+        })
+        .catch(error => {
+          showNotification('Gagal memuat data tracking: ' + error.message, false);
+        });
+    }
+    
+    // Fungsi untuk submit form
+    document.getElementById('trackingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Tampilkan loading
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<div class="loading"></div> Mengupdate...';
+      submitBtn.disabled = true;
+      
+      // Kumpulkan data dari form
+      const formData = {
+        schedule_id: document.getElementById('schedule_id').value,
+        train_id: document.getElementById('train_id').value,
+        train_name: document.getElementById('train_name').value,
+        route: document.getElementById('route').value,
+        status: document.getElementById('status').value,
+        current_station: document.getElementById('current_station').value,
+        next_station: document.getElementById('next_station').value,
+        departure_time: document.getElementById('departure_time').value,
+        arrival_time: document.getElementById('arrival_time').value,
+        delay: document.getElementById('delay').value || 0
+      };
+      
+      // Kirim data ke server PHP
+      fetch('update_schedule.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update preview dengan data baru
+          loadTrackingData();
+          
+          // Tutup modal
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+          
+          // Tampilkan notifikasi sukses
+          showNotification('Jadwal kereta berhasil diperbarui!', true);
+        } else {
+          // Tampilkan pesan error
+          showNotification('Gagal memperbarui jadwal: ' + data.message, false);
+        }
+      })
+      .catch(error => {
+        showNotification('Terjadi kesalahan: ' + error.message, false);
+      })
+      .finally(() => {
+        // Kembalikan tombol ke keadaan semula
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+      });
+    });
+    
+    // Mobile menu toggle
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    
+    mobileMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+    
+    // Saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+      // Muat data tracking
+      loadTrackingData();
+      
+      // Update countdown setiap detik
+      setInterval(() => {
+        const arrivalTime = document.getElementById('arrival_time').value;
+        if (arrivalTime) {
+          updateCountdown(arrivalTime);
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

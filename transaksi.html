@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riwayat Transaksi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f0f8ff;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background: #003366;
+      padding: 1rem 5%;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar img {
+      height: 50px;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      color: #003366;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background-color: #00509e;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #modal-pembayaran {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #modal-pembayaran .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+    }
+    #modal-pembayaran input {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+    }
+    #modal-pembayaran button {
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <img src="navbar.jpg" alt="Logo" />
+    <ul class="nav-links">
+      <li><a href="beranda.html">Beranda</a></li>
+      <li><a href="jadwal.html">Jadwal</a></li>
+      <li><a href="tracking.html">Tracking</a></li>
+      <li><a href="transaksi.html">Transaksi</a></li>
+      <li><a href="User_Profil.php">Akun</a></li>
+      <li><a href="login.html">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1>Riwayat Transaksi</h1>
+    <table id="tabel-transaksi">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>No. Telepon</th>
+          <th>Jumlah Tiket</th>
+          <th>Metode</th>
+          <th>Total</th>
+          <th>Waktu</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <!-- Modal Pembayaran -->
+  <div id="modal-pembayaran">
+    <div class="modal-content">
+      <h3>Form Pembayaran</h3>
+      <input type="hidden" id="pembayaran-id">
+      <label>Nomor Akun:</label>
+      <input type="text" id="akun">
+      <label>Nominal Pembayaran:</label>
+      <input type="number" id="nominal">
+      <button onclick="prosesBayar()">Bayar & Cetak</button>
+      <button onclick="tutupModal()">Batal</button>
+    </div>
+  </div>
+
+  <script>
+    // Ambil data transaksi
+    fetch('transaksi.php')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector('#tabel-transaksi tbody');
+        data.forEach(t => {
+          const aksi = t.status === 'completed'
+            ? '<span style="color: green; font-weight: bold;">Sukses</span>'
+            : `<button onclick="bukaPembayaran('${t.id}', '${t.total_amount}')">Bayar</button>`;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${t.customer_name}</td>
+            <td>${t.customer_phone}</td>
+            <td>${t.ticket_quantity}</td>
+            <td>${t.payment_method}</td>
+            <td>Rp ${parseFloat(t.total_amount).toLocaleString('id-ID')}</td>
+            <td>${new Date(t.created_at).toLocaleString('id-ID')}</td>
+            <td>${aksi}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Gagal mengambil data transaksi.');
+      });
+
+    function bukaPembayaran(id, total) {
+      document.getElementById('modal-pembayaran').style.display = 'flex';
+      document.getElementById('pembayaran-id').value = id;
+      document.getElementById('nominal').value = total;
+      document.getElementById('akun').value = '';
+    }
+
+    function tutupModal() {
+      document.getElementById('modal-pembayaran').style.display = 'none';
+    }
+
+    function prosesBayar() {
+      const id = document.getElementById('pembayaran-id').value;
+      const akun = document.getElementById('akun').value.trim();
+      const nominal = document.getElementById('nominal').value;
+
+      if (!akun || !nominal) {
+        alert('Nomor akun dan nominal harus diisi!');
+        return;
+      }
+
+      fetch('bayar1.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id, akun, nominal })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === 'success') {
+          const win = window.open('', '_blank');
+          win.document.write(`
+            <html>
+            <head><title>Bukti Pembayaran</title></head>
+            <body>
+              <h2>Bukti Pembayaran</h2>
+              <p>ID Transaksi: ${id}</p>
+              <p>Nomor Akun: ${akun}</p>
+              <p>Nominal: Rp ${parseFloat(nominal).toLocaleString('id-ID')}</p>
+              <p>Tanggal: ${new Date().toLocaleString('id-ID')}</p>
+            </body>
+            </html>
+          `);
+          win.document.close();
+          win.print();
+
+          const rows = document.querySelectorAll('#tabel-transaksi tbody tr');
+          rows.forEach(row => {
+            const button = row.querySelector('button');
+            if (button && button.getAttribute('onclick').includes(id)) {
+              button.parentElement.innerHTML = '<span style="color: green; font-weight: bold;">Sukses</span>';
+            }
+          });
+
+          tutupModal();
+        } else {
+          alert('Gagal memproses pembayaran: ' + res.message);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Terjadi kesalahan koneksi ke server.');
+      });
+    }
+  </script>
+
+</body>
+</html>
