@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riwayat Transaksi - Kereta Sulsel</title>
+  <style>
+    :root {
+      --biru-tua: #003366;
+      --biru-semi-tua: #00509e;
+      --biru-super-muda: #e6f2ff;
+      --hijau: #28a745;
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.2);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-super-muda), white);
+      margin: 0;
+      color: var(--biru-tua);
+    }
+
+    .navbar {
+      background: var(--biru-tua);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      padding: 8px 15px;
+      border-radius: 5px;
+      color: white;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--biru-tua);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+    }
+
+    th {
+      background: var(--biru-semi-tua);
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: var(--biru-super-muda);
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <img src="navbar.jpg" alt="Logo" height="50">
+    <ul class="nav-links">
+      <li><a href="beranda.html">Beranda</a></li>
+      <li><a href="jadwal.html">Jadwal</a></li>
+      <li><a href="tracking.html">Tracking</a></li>
+      <li><a href="transaksi.html">Transaksi</a></li>
+      <li><a href="User_Profil.html">Akun</a></li>
+      <li><a href="login.html" class="logout-btn">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1>Riwayat Transaksi</h1>
+    <div id="riwayat-container">Memuat data...</div>
+  </main>
+
+  <script>
+    const container = document.getElementById('riwayat-container');
+
+    fetch('riwayat.php')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Gagal memuat data dari server.');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Data riwayat transaksi:", data); // Untuk debugging
+
+        if (!Array.isArray(data) || data.length === 0) {
+          container.innerHTML = "<p>Belum ada transaksi.</p>";
+          return;
+        }
+
+        const table = document.createElement('table');
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Nomor Telepon</th>
+              <th>Kereta</th>
+              <th>Rute</th>
+              <th>Waktu</th>
+              <th>Jumlah</th>
+              <th>Metode</th>
+              <th>Total Bayar</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.map(t => `
+              <tr>
+                <td>${t.customer_name}</td>
+                <td>${t.customer_phone}</td>
+                <td>${t.train_name}</td>
+                <td>${t.route}</td>
+                <td>${new Date(t.departure_time).toLocaleString('id-ID')}</td>
+                <td>${t.ticket_quantity}</td>
+                <td>${t.payment_method}</td>
+                <td>Rp ${parseFloat(t.total_amount).toLocaleString('id-ID')}</td>
+                <td>${t.payment_status}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        `;
+        container.innerHTML = "";
+        container.appendChild(table);
+      })
+      .catch(error => {
+        console.error("Terjadi kesalahan:", error);
+        container.innerHTML = `<p class="error">Gagal memuat riwayat transaksi. Silakan coba lagi nanti.</p>`;
+      });
+  </script>
+
+</body>
+</html>
