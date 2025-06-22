@@ -1,0 +1,253 @@
+<!DOCTYPE html><html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk ke Akun Anda</title>
+    <style>
+        :root {
+          --biru-tua: #003366;
+          --biru-semi-tua: #00509e;
+          --biru-medium: #0077cc;
+          --biru-muda: #66b2ff;
+          --biru-sangat-muda: #cce5ff;
+          --biru-super-muda: #e6f2ff;
+          --biru-muda-transparan: rgba(102, 178, 255, 0.1);
+          --putih: #ffffff;
+          --shadow: 0 4px 12px rgba(0, 51, 102, 0.2);
+        }* {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px;
+        background: url('YANG ASLI.PNG') no-repeat center center;
+        background-size: cover;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-step {
+        max-width: 450px;
+        margin: 2rem auto;
+        background-color: var(--putih);
+        padding: 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 80, 158, 0.1);
+        border: 1px solid var(--biru-sangat-muda);
+        transition: transform 0.3s, box-shadow 0.3s;
+        background-image: 
+            linear-gradient(to bottom, var(--putih), var(--biru-super-muda));
+    }
+
+    .form-step:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 28px rgba(0, 80, 158, 0.15);
+        border-color: var(--biru-muda);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: var(--biru-tua);
+        font-size: 28px;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(to right, var(--biru-muda), var(--biru-medium));
+        border-radius: 2px;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    input {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid var(--biru-sangat-muda);
+        border-radius: 10px;
+        font-size: 16px;
+        background-color: var(--biru-super-muda);
+        transition: all 0.3s ease;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: var(--biru-medium);
+        background: var(--putih);
+        box-shadow: 0 0 0 3px rgba(0, 112, 204, 0.2);
+    }
+
+    input::placeholder {
+        color: var(--biru-medium);
+        opacity: 0.7;
+    }
+
+    button {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(to right, var(--biru-medium), var(--biru-semi-tua));
+        color: var(--putih);
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 45, 114, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    button:hover {
+        background: linear-gradient(to right, var(--biru-semi-tua), var(--biru-tua));
+        transform: translateY(-3px);
+        box-shadow: 0 7px 15px rgba(0, 45, 114, 0.4);
+    }
+
+    button::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.3),
+            rgba(255, 255, 255, 0)
+        );
+        transform: rotate(30deg);
+        transition: all 0.3s;
+    }
+
+    button:hover::after {
+        left: 100%;
+    }
+
+    .forgot-password {
+        text-align: right;
+        margin: 15px 0 25px;
+    }
+
+    .forgot-password a {
+        color: var(--biru-semi-tua);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .forgot-password a:hover {
+        color: var(--biru-tua);
+        text-decoration: underline;
+    }
+
+    .forgot-password a::before {
+        content: "?";
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        background: var(--biru-super-muda);
+        color: var(--biru-semi-tua);
+        border-radius: 50%;
+        margin-right: 8px;
+        font-size: 12px;
+    }
+
+    .register-link {
+        text-align: center;
+        margin-top: 30px;
+        color: var(--biru-tua);
+        font-size: 15px;
+    }
+
+    .register-link a {
+        color: var(--biru-semi-tua);
+        text-decoration: none;
+        font-weight: 700;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .register-link a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--biru-semi-tua);
+        transition: width 0.3s;
+    }
+
+    .register-link a:hover::after {
+        width: 100%;
+    }
+
+    @media (max-width: 480px) {
+        .form-step {
+            padding: 30px 20px;
+            border-radius: 12px;
+            margin: 1rem auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+        
+        input, button {
+            padding: 14px 18px;
+        }
+    }
+</style>
+
+</head>
+<body>
+    <form action="login.php" method="POST">
+        <div class="form-step">
+            <h1>Masuk ke Akun Anda</h1><div class="form-group">
+            <input type="email" name="email" placeholder="Alamat Email" required>
+        </div>
+
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Kata Sandi" required>
+        </div>
+
+        <div class="forgot-password">
+            <a href="lupa-password.html">Lupa kata sandi?</a>
+        </div>
+
+        <button type="submit">Masuk</button>
+
+        <div class="register-link">
+            Belum punya akun? <a href="register.html">Daftar sekarang</a>
+        </div>
+    </div>
+</form>
+
+</body>
+</html>

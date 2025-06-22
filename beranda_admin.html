@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Beranda Stasiun</title>
+  <style>
+    :root {
+      --biru-tua: #265AE0;
+      --biru-semi-tua: #3a6fe8;
+      --biru-muda: #66b2ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --merah: #dc3545;
+      --abu: rgba(248, 249, 250, 0.9);
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-tua), var(--putih));
+      color: #333;
+      line-height: 1.6;
+      padding: 0;
+      min-height: 100vh;
+    }
+    
+    /* Navbar */
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--biru-tua);
+    }
+    
+    .logo img {
+      height: 30px;
+      margin-right: 10px;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--biru-tua);
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    
+    .nav-links a:hover {
+      background-color: var(--biru-super-muda);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px 0;
+    }
+    
+    .header h1 {
+      color: var(--putih);
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.2rem;
+    }
+    
+    .content-wrapper {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .shortcut {
+      background-color: var(--putih);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 15px;
+      width: 28%;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .shortcut:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .shortcut-title {
+      color: var(--biru-tua);
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: var(--biru-semi-tua);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+      text-decoration: none;
+    }
+    
+    .btn:hover {
+      background-color: var(--biru-tua);
+    }
+    
+    .admin-info {
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 10px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    
+    .footer {
+      background-color: var(--biru-tua);
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      margin-top: 20px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        padding: 10px;
+      }
+      
+      .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .shortcut {
+        width: 100%;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo web.jpeg" alt="Logo">
+      <span>Admin Stasiun</span>
+    </div>
+    <div class="nav-links">
+      <a href="admin_beranda.html"><i class="fas fa-home"></i> Beranda</a>
+      <a href="admin_penjadwalan.html"><i class="fas fa-train"></i> Penjadwalan</a>
+      <a href="#"><i class="fas fa-chart-line"></i> Pemantauan</a>
+      <a href="#"><i class="fas fa-user"></i> Akun</a>
+      <a href="#"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1>Selamat Datang, Admin!</h1>
+      <p>Kelola dan pantau semua aktivitas stasiun dengan mudah di sini.</p>
+    </div>
+    
+    <div class="content-wrapper">
+      <div class="shortcut">
+        <h2 class="shortcut-title">Atur Jadwal Kereta</h2>
+        <button class="btn" onclick="window.location.href='admin_penjadwalan.html'"><i class="fas fa-calendar-alt"></i> Atur Jadwal</button>
+      </div>
+      
+      <div class="shortcut">
+        <h2 class="shortcut-title">Pemantauan Kereta Real-Time</h2>
+        <button class="btn" onclick="window.location.href='#'"><i class="fas fa-broadcast-tower"></i> Pemantauan</button>
+      </div>
+      
+      <div class="shortcut">
+        <h2 class="shortcut-title">Lihat Data Pemesanan</h2>
+        <button class="btn" onclick="window.location.href='#'"><i class="fas fa-file-alt"></i> Lihat Data</button>
+      </div>
+    </div>
+
+    <div class="admin-info">
+      <h3>Informasi Admin</h3>
+      <p>Nama: <strong>Admin Stasiun</strong></p>
+      <p>Email: <strong>admin@stasiun.com</strong></p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2023 Admin Stasiun. Semua hak dilindungi.</p>
+  </footer>
+</body>
+</html>

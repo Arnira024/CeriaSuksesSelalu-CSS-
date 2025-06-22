@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Beranda - Kereta Api Sulawesi Selatan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --biru-tua: #003366;
+      --biru-semi-tua: #00509e;
+      --biru-medium: #0077cc;
+      --biru-muda: #66b2ff;
+      --biru-sangat-muda: #cce5ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-muda), var(--biru-sangat-muda));
+      color: var(--biru-tua);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Navigation */
+    .navbar {
+      background-color: var(--biru-tua);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-img {
+      height: 50px;
+      width: auto;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: var(--putih);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: color 0.3s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-links a:hover {
+      color: var(--biru-muda);
+    }
+    
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--biru-muda);
+      transition: width 0.3s;
+    }
+    
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    
+    .nav-links a i {
+      margin-right: 8px;
+    }
+    
+    .logout-btn {
+      background-color: #dc3545;
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background-color: #c0392b;
+      color: var(--putih) !important;
+    }
+    
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .menu-toggle span {
+      height: 3px;
+      width: 25px;
+      background-color: var(--putih);
+      margin: 3px 0;
+      transition: all 0.3s;
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 2rem 5%;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .page-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--biru-tua);
+      position: relative;
+      padding-bottom: 10px;
+    }
+    
+    .page-title::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(to right, var(--biru-muda), var(--biru-medium));
+      border-radius: 2px;
+    }
+    
+    .features {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px; /* Jarak antar lingkaran ditambah */
+      margin: 2rem 0 8rem; /* Jarak bawah ditambah untuk memberi ruang lebih */
+    }
+    
+    .feature-item {
+      background: var(--putih);
+      border-radius: 50%;
+      width: 100px; /* Ukuran lingkaran diperkecil */
+      height: 100px; /* Ukuran lingkaran diperkecil */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      border: 2px solid var(--biru-sangat-muda);
+    }
+    
+    .feature-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0, 51, 102, 0.15);
+    }
+    
+    .feature-item img {
+      width: 35px; /* Ukuran gambar di dalam lingkaran diperkecil */
+      height: 35px; /* Ukuran gambar di dalam lingkaran diperkecil */
+      margin-bottom: 8px;
+      object-fit: contain;
+    }
+    
+    .feature-item span {
+      font-weight: 600;
+      color: var(--biru-semi-tua);
+      font-size: 0.75rem; /* Ukuran font judul di dalam lingkaran diperkecil */
+      text-align: center;
+    }
+
+    /* Garis Pemisah */
+    .separator {
+      border-top: 2px solid var(--biru-semi-tua);
+      margin: 2rem 0; /* Jarak antara fitur dan section */
+    }
+    
+    /* Info Section */
+    .info-section {
+      background: rgba(255, 255, 255, 0.8); /* Transparan */
+      border-radius: 10px;
+      padding: 0.3rem 0.5rem; /* Ubah padding */
+      margin: 1rem 0; /* Ubah margin */
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .info-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--biru-medium), var(--biru-semi-tua));
+    }
+    
+    .info-section h2 {
+      color: var(--biru-semi-tua);
+      margin-bottom: 0.3rem; /* Ubah margin */
+      font-size: 0.9rem; /* Ubah ukuran font */
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px; /* Ubah jarak */
+    }
+    
+    .info-section h2 i {
+      color: var(--biru-medium);
+    }
+    
+    .info-section p {
+      margin-bottom: 0.3rem; /* Ubah margin */
+      line-height: 1.3; /* Ubah line-height */
+      font-size: 0.75rem; /* Ubah ukuran font */
+      color: #444;
+    }
+    
+    .info-section ul {
+      margin-left: 1.2rem;
+      margin-bottom: 0.3rem; /* Ubah margin */
+    }
+    
+    .info-section li {
+      margin-bottom: 0.2rem; /* Ubah margin */
+      font-size: 0.75rem; /* Ubah ukuran font */
+      color: #555;
+      position: relative;
+      padding-left: 1.2rem;
+    }
+    
+    .info-section li::before {
+      content: "•";
+      color: var(--biru-medium);
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+    
+    .info-section hr {
+      border: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--biru-sangat-muda), transparent);
+      margin: 0.3rem 0; /* Ubah margin */
+    }
+    
+    .info-section h3 {
+      color: var(--biru-semi-tua);
+      font-size: 0.85rem; /* Ubah ukuran font */
+      margin: 0.3rem 0; /* Ubah margin */
+      font-weight: 500;
+    }
+    
+    /* Contact Section */
+    .contact-section {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px; /* Ubah jarak */
+      margin: 2rem 0;
+    }
+    
+    .contact-card {
+      background: rgba(255, 255, 255, 0.8); /* Transparan */
+      border-radius: 8px;
+      padding: 0.1rem; /* Ubah padding */
+      box-shadow: var(--shadow);
+      flex: 1;
+      min-width: 60px; /* Ubah ukuran minimum */
+      max-width: 80px; /* Ubah ukuran maksimum */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    
+    .contact-card:hover {
+      transform: translateY(-3px);
+    }
+    
+    .contact-card i {
+      font-size: 1.2rem; /* Ubah ukuran font */
+      color: var(--biru-semi-tua);
+      margin-bottom: 0.2rem; /* Ubah margin */
+    }
+    
+    .contact-card h3 {
+      color: var(--biru-semi-tua);
+      margin-bottom: 0.1rem; /* Ubah margin */
+      font-size: 0.65rem; /* Ubah ukuran font */
+      font-weight: 600;
+    }
+    
+    .contact-card p {
+      font-size: 0.5rem; /* Ubah ukuran font */
+      color: #555;
+      margin: 0.1rem 0; /* Ubah margin */
+    }
+    
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, var(--biru-semi-tua), var(--biru-tua));
+      color: var(--putih);
+      text-align: center;
+      padding: 1.5rem;
+      margin-top: auto;
+    }
+    
+    footer p {
+      margin: 0.3rem 0;
+      font-size: 0.9rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0.8rem 5%;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background-color: var(--biru-tua);
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+        transition: left 0.3s;
+        gap: 1rem;
+      }
+      
+      .nav-links.active {
+        left: 0;
+      }
+      
+      .menu-toggle {
+        display: flex;
+      }
+      
+      .main-content {
+        padding: 1.5rem;
+      }
+      
+      .features {
+        gap: 20px;
+      }
+      
+      .feature-item {
+        width: 80px; /* Ukuran lingkaran diperkecil */
+        height: 80px; /* Ukuran lingkaran diperkecil */
+      }
+      
+      .contact-section {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .contact-card {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo-container">
+      <img src="navbar.jpg" alt="Logo Kereta Sulsel" class="logo-img" />
+    </div>
+    
+    <div class="menu-toggle" id="mobile-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <ul class="nav-links" id="nav-links">
+      <li><a href="beranda.html" onclick="goToHome()" class="active"><i class="fas fa-home"></i> Beranda</a></li>
+      <li><a href="jadwal.html" onclick="goToSchedule()"><i class="fas fa-calendar-alt"></i> Jadwal</a></li>
+      <li><a href="tracking.html" onclick="goToTracking()"><i class="fas fa-map-marked-alt"></i> Tracking</a></li>
+      <li><a href="transaksi.html" onclick="goToTransactions()"><i class="fas fa-exchange-alt"></i> Transaksi</a></li>
+      <li><a href="User_Profil.php" onclick="goToAccount()"><i class="fas fa-user-circle"></i> Akun</a></li>
+      <li><a href="login.html" onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <h1 class="page-title">Pemesanan Tiket Kereta Kini Diujung Jari Anda</h1>
+    
+    <div class="features">
+      <div class="feature-item" onclick="window.location.href='tracking.html'">
+        <img src="https://img.icons8.com/ios-filled/50/00509e/map-marker.png" alt="Tracking"/>
+        <span>Tracking</span>
+      </div>
+      <div class="feature-item" onclick="window.location.href='jadwal.html'">
+        <img src="https://img.icons8.com/ios-filled/50/00509e/train.png" alt="Jadwal Kereta"/>
+        <span>Jadwal Kereta</span>
+      </div>
+     <div class="feature-item" onclick="window.location.href='jadwal.html'">
+        <img src="https://img.icons8.com/ios-filled/50/00509e/wallet.png" alt="Transaksi"/>
+        <span>Transaksi</span>
+      </div>
+    </div>
+
+    <div class="separator"></div> <!-- Garis pemisah -->
+
+    <div class="info-section">
+      <h2><i class="fas fa-train"></i> Proyek Strategis Nasional</h2>
+      <p>Kereta Api Sulsel adalah bagian dari proyek Trans-Sulawesi Railway, jalur kereta pertama di Pulau Sulawesi yang bertujuan menghubungkan kota-kota utama dari Makassar hingga Manado sepanjang ±2.000 km.</p>
+      
+      <h3>Jalur Makssar-Parepare</h3>
+      <ul>
+        <li>Dibangun sejak 18 Agustus 2014</li>
+        <li>Diresmikan secara terbatas pada 29 Oktober 2022</li>
+        <li>Dioperasikan penuh oleh Presiden Joko Widodo pada 29 Maret 2023</li>
+      </ul>
+      
+      <hr>
+      
+      <h3>Perkembangan & Masa Depan</h3>
+      <ul>
+        <li>Ditargetkan selesai secara menyeluruh pada tahun 2026</li>
+        <li>Fase-fase pembangunan berikutnya akan memperluas jangkauan ke kota-kota besar lainnya</li>
+        <li>Percepatan pembangunan jalur logistik dan infrastruktur pendukung</li>
+      </ul>
+    </div>
+
+    <div class="contact-section">
+      <div class="contact-card">
+        <i class="fas fa-phone-alt"></i>
+        <h3>Kontak Kami</h3>
+        <p>1500 123</p>
+        <p>08:00 - 17:00 WITA</p>
+      </div>
+      
+      <div class="contact-card">
+        <i class="fab fa-instagram"></i>
+        <h3>Instagram</h3>
+        <p>@keretasulsel_official</p>
+      </div>
+      
+      <div class="contact-card">
+        <i class="fas fa-envelope"></i>
+        <h3>Email</h3>
+        <p>info@keretasulsel.co.id</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 PT Kereta Api Sulawesi Selatan. All Rights Reserved.</p>
+    <p>Layanan Pelanggan: 24.24.24 | Email: Kareta@gmail.com</p>
+  </footer>
+
+  <script>
+    // Navigation functions
+    function goToHome() { 
+      console.log("Redirect to home");
+    }
+    
+    function goToSchedule() { 
+      console.log("Redirect to schedule");
+    }
+    
+    function goToTracking() { 
+      console.log("Redirect to tracking");
+    }
+    
+    function goToTransactions() { 
+      console.log("Redirect to transactions");
+    }
+    
+    function goToAccount() { 
+      console.log("Redirect to account");
+    }
+    
+    function logout() { 
+      console.log("Logout user");
+    }
+
+    // Mobile menu toggle
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    
+    mobileMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
