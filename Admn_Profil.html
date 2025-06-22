@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Profil</title>
+  <style>
+    :root {
+      --biru-tua: #265AE0;
+      --biru-semi-tua: #3a6fe8;
+      --biru-muda: #66b2ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --merah: #dc3545;
+      --abu: rgba(248, 249, 250, 0.9);
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-tua), var(--putih));
+      color: #333;
+      line-height: 1.6;
+      padding: 0;
+      min-height: 100vh;
+    }
+    
+    /* Navbar */
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--biru-tua);
+    }
+    
+    .logo img {
+      height: 30px;
+      margin-right: 10px;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--biru-tua);
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    
+    .nav-links a:hover {
+      background-color: var(--biru-super-muda);
+    }
+    
+     .nav-links a.active {
+      background-color: var(--biru-semi-tua);
+      color: white;
+    }
+
+    .nav-links a.active {
+      background-color: var(--biru-super-muda);
+      font-weight: 600;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px 0;
+    }
+    
+    .header h1 {
+      color: var(--putih);
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.2rem;
+    }
+    
+    /* Profile Styles */
+    .profile-container {
+      display: flex;
+      justify-content: center;
+    }
+    
+    .profile-card {
+      background-color: var(--putih);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      width: 100%;
+      max-width: 700px;
+    }
+    
+    .profile-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 30px;
+    }
+    
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 25px;
+      border: 3px solid var(--biru-muda);
+      background-color: var(--biru-super-muda);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: var(--biru-tua);
+    }
+    
+    .profile-info h2 {
+      color: var(--biru-tua);
+      margin-bottom: 5px;
+      font-size: 1.8rem;
+    }
+    
+    .profile-info p {
+      color: #666;
+      font-size: 1rem;
+    }
+    
+    .profile-details {
+      margin-bottom: 20px;
+    }
+    
+    .detail-row {
+      display: flex;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .detail-label {
+      width: 120px;
+      font-weight: 500;
+      color: var(--biru-tua);
+      font-size: 1.1rem;
+    }
+    
+    .detail-value {
+      flex: 1;
+      font-size: 1.1rem;
+    }
+    
+    .edit-btn {
+      background-color: var(--biru-semi-tua);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+      margin-top: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .edit-btn:hover {
+      background-color: var(--biru-tua);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--biru-tua);
+      font-size: 1.1rem;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .form-control:focus {
+      border-color: var(--biru-muda);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 178, 255, 0.2);
+    }
+    
+    .btn-save {
+      background-color: var(--hijau);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-save:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .btn-cancel {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+      margin-left: 15px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .btn-cancel:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .footer {
+      background-color: var(--biru-tua);
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      margin-top: 40px;
+    }
+    
+    .btn-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        padding: 10px;
+      }
+      
+      .profile-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .profile-avatar {
+        margin-right: 0;
+        margin-bottom: 20px;
+      }
+      
+      .btn-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn-cancel {
+        margin-left: 0;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo web.jpeg" alt="Logo">
+      <span>Admin Stasiun</span>
+    </div>
+    
+    <div class="nav-links">
+      <a href="Admn_Beranda.html"><i class="fas fa-home"></i> Beranda</a>
+      <a href="Admn_Penjadwalan.html"><i class="fas fa-train"></i> Penjadwalan</a>
+      <a href="Admn_Tracking.html"><i class="fas fa-chart-line"></i> Pemantauan</a>
+      <a href="Admn_Data_Pemesanan.html"><i class="fas fa-ticket-alt"></i> Pemesanan</a>
+      <a href="Admn_Profil.html" class="active"><i class="fas fa-user"></i> Akun</a>
+      <a href="Admn_Login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1>Profil Admin</h1>
+      <p>Kelola informasi akun</p>
+    </div>
+    
+    <div class="profile-container">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user-cog"></i>
+          </div>
+          <div class="profile-info">
+            <h2>Admin Stasiun</h2>
+            <p>Admin sejak <span>01 Januari 2023</span></p>
+          </div>
+        </div>
+        
+        <div class="profile-details" id="profileView">
+          <div class="detail-row">
+            <div class="detail-label">Email</div>
+            <div class="detail-value">admin@kai.co.id</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Jabatan</div>
+            <div class="detail-value">Admin Utama</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Alamat</div>
+            <div class="detail-value">Jl. Stasiun No. 1, Kota</div>
+          </div>
+          
+          <button class="edit-btn" onclick="enableEdit()">
+            <i class="fas fa-edit"></i> Edit Profil
+          </button>
+        </div>
+        
+        <div class="profile-details" id="profileEdit" style="display: none;">
+          <div class="form-group">
+            <label for="editEmail">Email</label>
+            <input type="email" id="editEmail" class="form-control" value="admin@kai.co.id">
+          </div>
+          <div class="form-group">
+            <label for="editPosition">Jabatan</label>
+            <input type="text" id="editPosition" class="form-control" value="Admin Utama">
+          </div>
+          <div class="form-group">
+            <label for="editAddress">Alamat</label>
+            <textarea id="editAddress" class="form-control" rows="3">Jl. Stasiun No. 1, Kota</textarea>
+          </div>
+          <div class="form-group">
+            <label for="editAvatar">Foto Profil</label>
+            <input type="file" id="editAvatar" class="form-control" accept="image/*">
+          </div>
+          
+          <div class="btn-container">
+            <button class="btn-save" onclick="saveProfile()">
+              <i class="fas fa-save"></i> Simpan
+            </button>
+            <button class="btn-cancel" onclick="cancelEdit()">
+              <i class="fas fa-times"></i> Batal
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2023 Admin Stasiun. Semua hak dilindungi.</p>
+  </footer>
+
+  <script>
+    // Fungsi untuk mengaktifkan mode edit
+    function enableEdit() {
+      document.getElementById('profileView').style.display = 'none';
+      document.getElementById('profileEdit').style.display = 'block';
+      
+      // Isi form edit dengan data saat ini
+      document.getElementById('editEmail').value = "admin@kai.co.id";
+      document.getElementById('editPosition').value = "Admin Utama";
+      document.getElementById('editAddress').value = "Jl. Stasiun No. 1, Kota";
+    }
+    
+    // Fungsi untuk membatalkan edit
+    function cancelEdit() {
+      document.getElementById('profileView').style.display = 'block';
+      document.getElementById('profileEdit').style.display = 'none';
+    }
+    
+    // Fungsi untuk menyimpan profil
+    function saveProfile() {
+      // Ambil nilai dari form edit
+      const email = document.getElementById('editEmail').value;
+      const position = document.getElementById('editPosition').value;
+      const address = document.getElementById('editAddress').value;
+      
+      // Update tampilan dengan data baru
+      document.getElementById('profileView').querySelectorAll('.detail-value')[0].textContent = email;
+      document.getElementById('profileView').querySelectorAll('.detail-value')[1].textContent = position;
+      document.getElementById('profileView').querySelectorAll('.detail-value')[2].textContent = address;
+      
+      // Handle upload gambar
+      const avatarInput = document.getElementById('editAvatar');
+      if (avatarInput.files && avatarInput.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          document.querySelector('.profile-avatar').innerHTML = '';
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = "Avatar";
+          document.querySelector('.profile-avatar').appendChild(img);
+        }
+        
+        reader.readAsDataURL(avatarInput.files[0]);
+      }
+      
+      // Kembali ke mode view
+      cancelEdit();
+      
+      // Tampilkan notifikasi
+      alert('Profil berhasil diperbarui!');
+    }
+  </script>
+</body>
+</html>

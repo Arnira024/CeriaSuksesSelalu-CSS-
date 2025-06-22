@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Tracking Kereta</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --biru-tua: #003366;
+      --biru-semi-tua: #00509e;
+      --biru-medium: #0077cc;
+      --biru-muda: #66b2ff;
+      --biru-sangat-muda: #cce5ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --merah: #dc3545;
+      --kuning: #FFC107;
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.2);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-super-muda), var(--putih));
+      color: var(--biru-tua);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .navbar {
+      background-color: var(--biru-tua);
+      padding: 1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+    .logo-img {
+      height: 50px;
+      width: auto;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--putih);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 0;
+      position: relative;
+      transition: color 0.3s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    .nav-links a:hover {
+      color: var(--biru-muda);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--biru-muda);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .nav-links a i {
+      margin-right: 8px;
+    }
+    .logout-btn {
+      background-color: var(--merah);
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+    .logout-btn:hover {
+      background-color: #c0392b;
+      color: var(--putih) !important;
+    }
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    .menu-toggle span {
+      height: 3px;
+      width: 25px;
+      background-color: var(--putih);
+      margin: 3px 0;
+      transition: all 0.3s;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .card {
+      background: var(--putih);
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 1rem;
+    }
+    .on-trip { background-color: var(--hijau); }
+    .arrived { background-color: var(--merah); }
+    .delayed { background-color: var(--kuning); }
+    .countdown {
+      font-size: 2em;
+      text-align: center;
+      margin: 1.5rem 0;
+      color: var(--hijau);
+      font-weight: bold;
+    }
+    .progress-container {
+      height: 6px;
+      background: var(--biru-sangat-muda);
+      border-radius: 3px;
+      margin: 1rem 0;
+    }
+    .progress-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(to right, var(--biru-muda), var(--biru-medium));
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    .train-id {
+      font-size: 0.9em;
+      color: var(--biru-semi-tua);
+      margin-bottom: 0.5rem;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    .warning { animation: pulse 1s infinite; }
+    @media (max-width: 768px) {
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 80px);
+        background-color: var(--biru-tua);
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+        transition: left 0.3s;
+        gap: 1rem;
+      }
+      .nav-links.active {
+        left: 0;
+      }
+      .menu-toggle {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo-container">
+      <img src="navbar.jpg" alt="Logo" class="logo-img" />
+    </div>
+    <div class="menu-toggle" id="mobile-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="beranda.html"><i class="fas fa-home"></i> Beranda</a></li>
+      <li><a href="jadwal.html"><i class="fas fa-calendar-alt"></i> Jadwal</a></li>
+      <li><a href="tracking.html"><i class="fas fa-map-marked-alt"></i> Tracking</a></li>
+      <li><a href="transaksi.html"><i class="fas fa-exchange-alt"></i> Transaksi</a></li>
+      <li><a href="User_Profil.php"><i class="fas fa-user-circle"></i> Akun</a></li>
+      <li><a href="login.html" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1>Live Tracking Kereta</h1>
+    <div class="card">
+      <h2 id="train-name">KRA transport</h2>
+      <h3 id="train-route">Sulawesi Selatan</h3>
+      <div id="train-id" class="train-id">ID Kereta: <span id="train-id-value">-</span></div>
+      <div id="status-container">
+        <div class="loading">Memuat data...</div>
+      </div>
+      <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <p class="last-updated">Terakhir diperbarui: <span id="last-updated">-</span></p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 PT Kereta Api Sulawesi Selatan</p>
+  </footer>
+
+ <script>
+  let arrivalTimeGlobal = null;
+  let countdownInterval = null;
+
+  // Fungsi utama: ambil data tracking dari tracking.php
+  async function updateDisplay() {
+    try {
+      const response = await fetch('tracking.php');
+      const data = await response.json();
+
+      // Update info dasar kereta
+      document.getElementById('train-id-value').textContent = data.train_id || '-';
+      document.getElementById('train-name').textContent = data.train_name || '-';
+      document.getElementById('train-route').textContent = data.route || '-';
+      document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('id-ID');
+
+      let html = '';
+      if (data.status === "on_trip") {
+        html = `
+          <div class="status-badge on-trip">DALAM PERJALANAN</div>
+          <p>Menuju: <strong>${data.next_station || '-'}</strong></p>
+          ${data.delay ? `<p class="delay-warning">⚠️ Terlambat ${data.delay} menit</p>` : ''}
+          <div class="station-info">
+            <p>Berangkat dari: <strong>${data.current_station || '-'}</strong></p>
+            <p>Estimasi tiba: <strong>${formatTime(data.arrival_time)}</strong></p>
+          </div>
+          <div class="countdown" id="countdown-container">
+            <p>Tiba dalam:</p>
+            <div id="countdown-timer">00:00:00</div>
+          </div>
+        `;
+        document.getElementById('status-container').innerHTML = html;
+
+        arrivalTimeGlobal = new Date(data.arrival_time);
+        updateProgressBar(data.departure_time, data.arrival_time);
+
+        // Jalankan countdown hanya sekali
+        if (!countdownInterval) {
+          startCountdown();
+        }
+
+      } else if (data.status === "arrived") {
+        html = `
+          <div class="status-badge arrived">TELAH TIBA</div>
+          <p>Kereta telah tiba di <strong>${data.next_station || '-'}</strong>.</p>
+        `;
+        document.getElementById('status-container').innerHTML = html;
+
+        // Tampilkan progress bar penuh
+        document.getElementById('progress-bar').style.width = '100%';
+
+        // Hentikan countdown
+        if (countdownInterval) {
+          clearInterval(countdownInterval);
+          countdownInterval = null;
+        }
+
+      } else {
+        document.getElementById('status-container').innerHTML =
+          '<p>Status kereta tidak tersedia.</p>';
+      }
+
+    } catch (error) {
+      console.error(error);
+      document.getElementById('status-container').innerHTML =
+        '<p class="error">Gagal memuat data. Silakan refresh halaman.</p>';
+    }
+  }
+
+  // Fungsi jalankan countdown
+  function startCountdown() {
+    const timerElement = document.getElementById('countdown-timer');
+    const container = document.getElementById('countdown-container');
+
+    countdownInterval = setInterval(() => {
+      if (!arrivalTimeGlobal) return;
+      const diff = arrivalTimeGlobal - new Date();
+      if (diff <= 0) {
+        timerElement.textContent = "00:00:00";
+        container.classList.add('warning');
+        clearInterval(countdownInterval);
+        countdownInterval = null; // Reset interval agar bisa jalan lagi jika update berikutnya on_trip
+        return;
+      }
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+      timerElement.textContent =
+        `${hours.toString().padStart(2, '0')}:` +
+        `${mins.toString().padStart(2, '0')}:` +
+        `${secs.toString().padStart(2, '0')}`;
+
+      if (diff < 5 * 60 * 1000) {
+        container.classList.add('warning');
+      }
+    }, 1000);
+  }
+
+  // Format jam
+  function formatTime(dateTimeStr) {
+    if (!dateTimeStr) return '-';
+    return new Date(dateTimeStr).toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  // Update progress bar
+  function updateProgressBar(departureTime, arrivalTime) {
+    const now = new Date();
+    const start = new Date(departureTime);
+    const end = new Date(arrivalTime);
+
+    let progress = 0;
+    if (now >= end) {
+      progress = 100;
+    } else if (now > start) {
+      const total = end - start;
+      const elapsed = now - start;
+      progress = (elapsed / total) * 100;
+    }
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+  }
+
+  // Mobile menu toggle
+  const mobileMenu = document.getElementById('mobile-menu');
+  const navLinks = document.getElementById('nav-links');
+  mobileMenu.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    mobileMenu.classList.toggle('active');
+  });
+
+  // Jalankan fungsi utama + auto refresh tiap 30 detik
+  updateDisplay();
+  setInterval(updateDisplay, 30000);
+</script>
+
+
+</body>
+</html>

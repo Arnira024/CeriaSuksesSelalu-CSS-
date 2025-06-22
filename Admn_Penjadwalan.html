@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Kelola Jadwal Kereta Sulsel</title>
+  <style>
+    .train-item {
+  background: #fff;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.form-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+    :root {
+      --biru-tua: #265AE0;
+      --biru-semi-tua: #3a6fe8;
+      --biru-muda: #66b2ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --merah: #dc3545;
+      --abu: rgba(248, 249, 250, 0.9);
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-tua), var(--putih));
+      background-attachment: fixed;
+      color: #333;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--biru-tua);
+    }
+
+    .logo img {
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--biru-tua);
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .nav-links a:hover {
+      background-color: var(--biru-super-muda);
+    }
+
+    .nav-links a.active {
+      background-color: var(--biru-semi-tua);
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+      flex: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px 0;
+    }
+
+    .header h1 {
+      color: var(--putih);
+      font-size: 2rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+    }
+
+    /* Navigasi Rute Radio Button */
+    .rute-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .rute-option {
+      position: relative;
+    }
+
+    .rute-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .rute-option label {
+      display: block;
+      padding: 8px 15px;
+      background-color: var(--putih);
+      border: 2px solid var(--biru-muda);
+      border-radius: 20px;
+      color: var(--biru-tua);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      min-width: 160px;
+      font-size: 0.9rem;
+    }
+
+    .rute-option input[type="radio"]:checked + label {
+      background-color: var(--biru-tua);
+      color: var(--putih);
+      border-color: var(--biru-tua);
+    }
+
+    .rute-option label:hover {
+      background-color: var(--biru-super-muda);
+    }
+
+    /* Panel dan Content Wrapper */
+    .content-wrapper {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .panel {
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      width: 45%;
+      max-height: 530px;
+      display: flex;
+      flex-direction: column;
+      transition: max-height 0.5s ease;
+      overflow: hidden;
+    }
+
+    .train-form {
+      margin-top: 15px;
+      overflow-y: auto;
+      max-height: 320px;
+      padding-right: 10px;
+    }
+
+    .train-form.hidden {
+      display: none;
+    }
+
+    .image-container {
+      width: 45%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-left: auto;
+      min-width: 300px;
+      max-width: 45%;
+      flex-shrink: 0;
+    }
+
+    .image-container img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .panel-title {
+      color: var(--biru-tua);
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--biru-muda);
+    }
+
+    .info-box {
+      background-color: var(--abu);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .info-box h3 {
+      color: var(--biru-tua);
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .info-box p {
+      margin-bottom: 8px;
+      padding-left: 8px;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: var(--biru-semi-tua);
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      background-color: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group input:active,
+    .form-group select:active {
+      border-color: var(--biru-tua);
+      box-shadow: 0 0 0 2px rgba(38, 90, 224, 0.2);
+      outline: none;
+    }
+
+    .rute-display {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      background-color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--biru-semi-tua);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+      margin-top: 12px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: var(--biru-tua);
+    }
+
+    .btn i {
+      margin-right: 6px;
+    }
+
+    .btn-danger {
+      background-color: var(--merah);
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-success {
+      background-color: var(--hijau);
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .train-item {
+      background: var(--putih);
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-size: 0.9rem;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .footer {
+      background-color: var(--biru-tua);
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        padding: 10px;
+      }
+
+      .nav-links {
+        margin-top: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .rute-selector {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .rute-option {
+        width: 100%;
+      }
+
+      .rute-option label {
+        width: 100%;
+      }
+
+      .content-wrapper {
+        flex-direction: column;
+      }
+
+      .panel,
+      .image-container {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .image-container img {
+        max-height: 400px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo web.jpeg" alt="Logo" />
+      <span>Admin Stasiun</span>
+    </div>
+    <div class="nav-links">
+     <a href="Admn_Beranda.html"><i class="fas fa-home"></i> Beranda</a>
+     <a href="Admn_Penjadwalan.html" class="active"><i class="fas fa-train"></i> Penjadwalan</a>
+     <a href="Admn_Tracking.html"><i class="fas fa-chart-line"></i> Pemantauan</a>
+     <a href="Admn_Data_Pemesanan.html"><i class="fas fa-ticket-alt"></i> Pemesanan</a>
+     <a href="Admn_Profil.html"><i class="fas fa-user"></i> Akun</a>
+     <a href="Admn_Login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1>Halo Admin!</h1>
+      <p>Kelola data dan pantau pemesanan tiket dengan mudah di sini.</p>
+    </div>
+
+    <!-- Navigasi Rute Radio Button -->
+    <div class="rute-selector">
+      <div class="rute-option">
+        <input type="radio" id="rute1" name="rute" value="mandai-garongkong" checked />
+        <label for="rute1">Mandai-Garongkong</label>
+      </div>
+      <div class="rute-option">
+        <input type="radio" id="rute2" name="rute" value="garongkong-mandai" />
+        <label for="rute2">Garongkong-Mandai</label>
+      </div>
+      <div class="rute-option">
+        <input type="radio" id="rute3" name="rute" value="garongkong-mangilu" />
+        <label for="rute3">Garongkong-Mangilu</label>
+      </div>
+      <div class="rute-option">
+        <input type="radio" id="rute4" name="rute" value="mangilu-garongkong" />
+        <label for="rute4">Mangilu-Garongkong</label>
+      </div>
+    </div>
+
+<div class="content-wrapper">
+  <!-- Panel Jadwal Kereta -->
+  <div class="panel">
+    <h2 class="panel-title">
+      Jadwal Kereta Rute <span id="rute-name">Mandai-Garongkong</span>
+    </h2>
+
+    <!-- ALERT UNTUK ERROR -->
+    <div id="alert-message" class="alert hidden"></div>
+
+    <!-- DAFTAR JADWAL DALAM CARD -->
+    <div id="jadwal-list"></div>
+
+    <!-- FORM TAMBAH/EDIT JADWAL -->
+    <form method="POST" action="Admn_jadwal.php" class="train-form hidden" id="train-form">
+      <h3>Tambah/Edit Jadwal Kereta</h3>
+
+      <div class="form-group">
+        <label>Rute Terpilih</label>
+        <input type="text" id="rute-display" class="rute-display" readonly />
+        <input type="hidden" id="rute-value" name="rute" />
+      </div>
+
+      <div class="form-group">
+        <label for="train_name">Nama Kereta</label>
+        <input type="text" name="train_name" id="train_name" required placeholder="Contoh: Kereta Cepat Sulsel" />
+      </div>
+
+      <div class="form-group">
+        <label for="departure_station_id">ID Stasiun Keberangkatan</label>
+        <input type="number" name="departure_station_id" id="departure_station_id" required />
+      </div>
+
+      <div class="form-group">
+        <label for="arrival_station_id">ID Stasiun Kedatangan</label>
+        <input type="number" name="arrival_station_id" id="arrival_station_id" required />
+      </div>
+
+      <div class="form-group">
+        <label for="departure_time">Waktu Keberangkatan</label>
+        <input type="datetime-local" name="departure_time" id="departure_time" required />
+      </div>
+
+      <div class="form-group">
+        <label for="arrival_time">Waktu Kedatangan</label>
+        <input type="datetime-local" name="arrival_time" id="arrival_time" required />
+      </div>
+
+      <div class="form-group">
+        <label for="price">Harga Tiket (Rp)</label>
+        <input type="number" name="price" id="price" required min="1000" value="10000" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-save"></i> Simpan
+        </button>
+        <button type="button" class="btn btn-danger" id="cancel-train-btn">
+          <i class="fas fa-times"></i> Batal
+        </button>
+      </div>
+    </form>
+
+    <!-- TOMBOL TAMBAH JADWAL -->
+    <button type="button" class="btn" id="add-train-btn">
+      <i class="fas fa-plus"></i> Tambah Jadwal Kereta
+    </button>
+  </div>
+
+  <!-- Gambar Kereta -->
+  <div class="image-container">
+    <img src="In train.png" alt="Kereta Api" />
+  </div>
+</div>
+
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Admin Stasiun. Semua hak dilindungi.</p>
+  </footer>
+
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const ruteRadios = document.querySelectorAll('input[name="rute"]');
+  const ruteName = document.getElementById("rute-name");
+  const ruteDisplay = document.getElementById("rute-display");
+  const ruteValue = document.getElementById("rute-value");
+  const list = document.getElementById('jadwal-list');
+  const trainForm = document.getElementById("train-form");
+  const addTrainBtn = document.getElementById("add-train-btn");
+  const cancelTrainBtn = document.getElementById("cancel-train-btn");
+  const alertMessage = document.getElementById("alert-message");
+
+  // Load semua jadwal untuk rute tertentu
+  function loadJadwal(rute) {
+    fetch('get_jadwal.php')
+      .then(response => response.json())
+      .then(data => {
+        list.innerHTML = '';
+        data.filter(j => j.route_name === rute).forEach(jadwal => {
+          const card = document.createElement('div');
+          card.className = 'train-item';
+          card.innerHTML = `
+            <strong>${jadwal.train_name}</strong><br>
+            Rute: ${jadwal.route_name}<br>
+            Stasiun: ${jadwal.departure_station_id}<br>
+            Berangkat: ${jadwal.departure_time} | Tiba: ${jadwal.arrival_time}<br>
+            Harga: Rp ${jadwal.price}<br>
+            <div class="form-actions">
+              <button class="btn btn-success" onclick="editJadwal(${jadwal.id})"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn btn-danger" onclick="hapusJadwal(${jadwal.id})"><i class="fas fa-trash"></i> Hapus</button>
+            </div>
+          `;
+          list.appendChild(card);
+        });
+      });
+  }
+
+  // Ganti rute saat radio button di klik
+  ruteRadios.forEach(radio => {
+    radio.addEventListener("change", function () {
+      if (this.checked) {
+        const rute = this.nextElementSibling.textContent;
+        ruteName.textContent = rute;
+        ruteDisplay.value = rute;
+        ruteValue.value = rute;
+        loadJadwal(rute);
+      }
+    });
+  });
+
+  // Load default pertama kali
+  const defaultRute = document.querySelector('input[name="rute"]:checked').nextElementSibling.textContent;
+  ruteName.textContent = defaultRute;
+  ruteDisplay.value = defaultRute;
+  ruteValue.value = defaultRute;
+  loadJadwal(defaultRute);
+
+  // Tombol show/hide form
+  addTrainBtn.addEventListener("click", function() {
+    trainForm.classList.remove("hidden");
+    addTrainBtn.classList.add("hidden");
+  });
+
+  cancelTrainBtn.addEventListener("click", function() {
+    trainForm.classList.add("hidden");
+    addTrainBtn.classList.remove("hidden");
+    let idInput = document.getElementById('jadwal-id');
+    if (idInput) idInput.remove();
+  });
+
+  // Validasi harga minimal
+  trainForm.addEventListener("submit", function(e) {
+    const price = document.getElementById("price").value;
+    if (price < 1000) {
+      e.preventDefault();
+      alertMessage.textContent = "Harga tiket harus minimal Rp1.000";
+      alertMessage.className = "alert alert-danger";
+      alertMessage.classList.remove("hidden");
+    }
+  });
+
+  // Fungsi hapus jadwal
+  window.hapusJadwal = function(id) {
+    if (confirm('Yakin mau hapus jadwal ini?')) {
+      fetch(`delete_jadwal.php?id=${id}`)
+        .then(response => response.text())
+        .then(data => {
+          alert(data);
+          loadJadwal(ruteValue.value);
+        });
+    }
+  }
+
+  // Fungsi edit jadwal
+  window.editJadwal = function(id) {
+    fetch(`get_jadwal_detail.php?id=${id}`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('train_name').value = data.train_name;
+        document.getElementById('departure_station_id').value = data.departure_station_id;
+        document.getElementById('arrival_station_id').value = data.arrival_station_id;
+        document.getElementById('departure_time').value = data.departure_time;
+        document.getElementById('arrival_time').value = data.arrival_time;
+        document.getElementById('price').value = data.price;
+        ruteName.textContent = data.route_name;
+        ruteDisplay.value = data.route_name;
+        ruteValue.value = data.route_name;
+
+        trainForm.classList.remove("hidden");
+        addTrainBtn.classList.add("hidden");
+
+        let idInput = document.getElementById('jadwal-id');
+        if (!idInput) {
+          idInput = document.createElement('input');
+          idInput.type = 'hidden';
+          idInput.name = 'id';
+          idInput.id = 'jadwal-id';
+          trainForm.appendChild(idInput);
+        }
+        idInput.value = data.id;
+      });
+  }
+
+});
+
+</script>
+
+</body>
+</html>

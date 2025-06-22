@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Data Transaksi</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --biru-tua: #265AE0;
+      --biru-semi-tua: #3a6fe8;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --merah: #dc3545;
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-tua), var(--putih));
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--biru-tua);
+    }
+
+    .logo img {
+      height: 30px;
+      margin-right: 10px;
+    }
+
+    .nav-links a {
+      margin-left: 15px;
+      text-decoration: none;
+      color: var(--biru-tua);
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .nav-links a.active {
+      background-color: var(--biru-semi-tua);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+
+    .container {
+      flex: 1;
+      max-width: 1200px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      color: var(--biru-tua);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: var(--biru-semi-tua);
+      color: white;
+    }
+
+    .refund-btn {
+      background-color: orange;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .refunded-text {
+      color: var(--merah);
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo web.jpeg" alt="Logo">
+      <span>Admin Stasiun</span>
+    </div>
+    <div class="nav-links">
+      <a href="Admn_Beranda.html">Beranda</a>
+      <a href="Admn_Penjadwalan.html">Penjadwalan</a>
+      <a href="Admn_Tracking.html">Pemantauan</a>
+      <a href="Admn_Data_Pemesanan.html">Pemesanan</a>
+      <a href="Admn_Profil.html">Akun</a>
+      <a href="Admn_Login.html">Log Out</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Data Transaksi Pengguna</h1>
+    <table id="transaksi-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nama</th>
+          <th>Telepon</th>
+          <th>Jumlah Tiket</th>
+          <th>Total</th>
+          <th>Metode</th>
+          <th>Status</th>
+          <th>Waktu</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data transaksi akan dimuat oleh JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function loadTransaksi() {
+      fetch('transaksi.php')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#transaksi-table tbody');
+          tbody.innerHTML = '';
+
+          data.forEach(t => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${t.id}</td>
+              <td>${t.customer_name}</td>
+              <td>${t.customer_phone}</td>
+              <td>${t.ticket_quantity}</td>
+              <td>Rp ${parseFloat(t.total_amount).toLocaleString('id-ID')}</td>
+              <td>${t.payment_method}</td>
+              <td>${t.status}</td>
+              <td>${t.created_at}</td>
+              <td>
+                ${t.status === 'refunded' 
+                  ? '<span class="refunded-text">Refunded</span>' 
+                  : `<button class="refund-btn" onclick="refundTransaksi(${t.id})">Refund</button>`}
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        });
+    }
+
+    function refundTransaksi(id) {
+      if (confirm("Yakin ingin merefund transaksi ini?")) {
+        fetch(`refund_transaksi.php?id=${id}`, { method: 'GET' })
+          .then(res => res.json())
+          .then(response => {
+            alert(response.message);
+            loadTransaksi();
+          })
+          .catch(err => {
+            alert("Gagal melakukan refund.");
+            console.error(err);
+          });
+      }
+    }
+
+    loadTransaksi();
+  </script>
+</body>
+</html>

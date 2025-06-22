@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Data Pemesanan Tiket</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --biru-tua: #265AE0;
+      --biru-semi-tua: #3a6fe8;
+      --biru-muda: #66b2ff;
+      --biru-super-muda: #e6f2ff;
+      --putih: #ffffff;
+      --hijau: #28a745;
+      --merah: #dc3545;
+      --abu: rgba(248, 249, 250, 0.9);
+      --shadow: 0 4px 12px rgba(0, 51, 102, 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, var(--biru-tua), var(--putih));
+      background-attachment: fixed;
+      color: #333;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: var(--biru-tua);
+    }
+
+    .logo img { height: 30px; margin-right: 10px; }
+
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--biru-tua);
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .nav-links a:hover { background-color: var(--biru-super-muda); }
+    .nav-links a.active {
+      background-color: var(--biru-semi-tua);
+      color: white;
+    }
+    .nav-links a i { margin-right: 5px; }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+      flex: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 20px 0;
+    }
+
+    .header h1 {
+      color: var(--putih);
+      font-size: 2rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+    }
+
+    .booking-container {
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: var(--biru-tua);
+      color: white;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) { background-color: var(--biru-super-muda); }
+    tr:hover { background-color: rgba(102, 178, 255, 0.2); }
+
+    #no-bookings-msg {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--merah);
+      padding: 20px;
+    }
+
+    .footer {
+      background-color: var(--biru-tua);
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    button.refund-btn {
+      background-color: var(--merah);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: background 0.3s;
+    }
+
+    button.refund-btn:hover {
+      background-color: #b52a33;
+    }
+
+    @media (max-width: 768px) {
+      .navbar { flex-direction: column; padding: 10px; }
+      .nav-links {
+        margin-top: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      table { font-size: 0.8rem; }
+      th, td { padding: 8px 4px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <img src="logo web.jpeg" alt="Logo" />
+      <span>Admin Stasiun</span>
+    </div>
+    <div class="nav-links">
+      <a href="Admn_Beranda.html"><i class="fas fa-home"></i> Beranda</a>
+      <a href="Admn_Penjadwalan.html"><i class="fas fa-train"></i> Penjadwalan</a>
+      <a href="Admn_Tracking.html"><i class="fas fa-chart-line"></i> Pemantauan</a>
+      <a href="Admn_Data_Pemesanan.html" class="active"><i class="fas fa-ticket-alt"></i> Pemesanan</a>
+      <a href="Admn_Profil.html"><i class="fas fa-user"></i> Akun</a>
+      <a href="Admn_Login.html"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1>Data Pemesanan Tiket</h1>
+      <p>Kelola dan pantau semua pemesanan tiket kereta api</p>
+    </div>
+
+    <div class="booking-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Nama Pelanggan</th>
+            <th>Nomor Telepon</th>
+            <th>Kereta</th>
+            <th>Rute</th>
+            <th>Stasiun</th>
+            <th>Waktu</th>
+            <th>Harga per Tiket</th>
+            <th>Jumlah Tiket</th>
+            <th>Total Harga</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="booking-tbody"></tbody>
+      </table>
+      <div id="no-bookings-msg" style="display: none;">Belum ada pemesanan tiket.</div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Admin Stasiun. Semua hak dilindungi.</p>
+  </footer>
+
+  <script>
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(amount);
+    }
+
+    function displayBookings() {
+      fetch('get_transactions.php')
+        .then(response => response.json())
+        .then(data => {
+          const tbody = document.getElementById('booking-tbody');
+          const noBookingsMsg = document.getElementById('no-bookings-msg');
+
+          if (data.length === 0) {
+            noBookingsMsg.style.display = 'block';
+            tbody.innerHTML = '';
+            return;
+          }
+
+          noBookingsMsg.style.display = 'none';
+          tbody.innerHTML = '';
+
+          data.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.customer_name}</td>
+              <td>${item.customer_phone}</td>
+              <td>${item.schedule_id}</td>
+              <td>Rute</td>
+              <td>Stasiun</td>
+              <td>${item.created_at}</td>
+              <td>${formatCurrency(item.total_amount / item.ticket_quantity)}</td>
+              <td>${item.ticket_quantity}</td>
+              <td>${formatCurrency(item.total_amount)}</td>
+              <td>
+                <span class="status-badge" style="
+                  background-color: ${item.status === 'Dikonfirmasi' ? 'var(--hijau)' : 
+                                      item.status === 'Pending' ? '#ffc107' : 'var(--merah)'};
+                  color: white;
+                  padding: 4px 8px;
+                  border-radius: 12px;
+                  font-size: 0.8rem;
+                ">${item.status}</span>
+              </td>
+              <td>
+                <button class="refund-btn" onclick="refundTransaksi(${item.id})">
+                  <i class="fas fa-undo-alt"></i> Refund
+                </button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(error => {
+          console.error('Gagal memuat data:', error);
+        });
+    }
+
+    function refundTransaksi(id) {
+      if (confirm("Yakin mau refund dan hapus transaksi ini?")) {
+        fetch(`refund_transaksi.php?id=${id}`)
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            displayBookings();
+          })
+          .catch(error => {
+            console.error('Gagal refund:', error);
+          });
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', displayBookings);
+  </script>
+</body>
+</html>
